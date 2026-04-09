@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Gestão da Automação</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #f0f2f5;
+            padding: 20px;
+        }
+
+        /* Container principal */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        /* Cabeçalho */
+        .header {
+            background: linear-gradient(135deg, #1a3c34, #0e2a23);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .app-title h1 {
+            font-size: 1.8rem;
+            letter-spacing: 1px;
+        }
+
+        .clock {
+            text-align: right;
+            background: rgba(255,255,255,0.15);
+            padding: 10px 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+        }
+
+        .time {
+            font-size: 2rem;
+            font-weight: bold;
+            font-family: monospace;
+        }
+
+        .date {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        /* Missão e Visão */
+        .mission-vision {
+            display: flex;
+            gap: 20px;
+            padding: 25px 30px;
+            background: #f8f9fc;
+            border-bottom: 1px solid #e0e4e8;
+        }
+
+        .card {
+            flex: 1;
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-left: 5px solid #2e7d64;
+        }
+
+        .card h3 {
+            color: #1a3c34;
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+
+        .card p {
+            color: #333;
+            line-height: 1.5;
+        }
+
+        /* Alertas */
+        .alerts-area {
+            padding: 0 30px 20px 30px;
+        }
+
+        .alert-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .alert-box {
+            flex: 1;
+            border-radius: 16px;
+            padding: 15px;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .critical {
+            border-top: 5px solid #dc3545;
+            background: #fff5f5;
+        }
+
+        .warning {
+            border-top: 5px solid #ffc107;
+            background: #fffef7;
+        }
+
+        .alert-box h4 {
+            margin-bottom: 12px;
+            font-size: 1.2rem;
+        }
+
+        .alert-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .alert-item {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+            font-size: 0.9rem;
+        }
+
+        .alert-item.crit {
+            color: #c82333;
+            font-weight: 500;
+        }
+
+        /* Abas */
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            background: #fff;
+            border-bottom: 2px solid #e0e4e8;
+            padding: 0 20px;
+            gap: 5px;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 12px 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: #555;
+            transition: all 0.2s;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .tab-btn.active {
+            color: #2e7d64;
+            border-bottom: 3px solid #2e7d64;
+            background: #f8f9fc;
+        }
+
+        .tab-content {
+            padding: 25px 30px;
+            background: #fff;
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Tabelas e cards genéricos */
+        .info-card {
+            background: #f8f9fc;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        .info-card h3 {
+            color: #1a3c34;
+            margin-bottom: 15px;
+            border-left: 4px solid #2e7d64;
+            padding-left: 12px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #e0e4e8;
+        }
+
+        th {
+            background: #eef2f5;
+            font-weight: 600;
+        }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .btn-edit {
+            background: #2e7d64;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        input, select, textarea {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            margin: 5px 0;
+            width: 100%;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- CABEÇALHO -->
+    <div class="header">
+        <div class="app-title"><h1>📊 Gestão da Automação</h1></div>
+        <div class="clock">
+            <div class="time" id="liveClock">--:--:--</div>
+            <div class="date" id="liveDate">---, -- ---</div>
+        </div>
+    </div>
+
+    <!-- MISSÃO E VISÃO -->
+    <div class="mission-vision">
+        <div class="card"><h3>🎯 Missão</h3><p>Garantir a excelência operacional através da automação industrial, aumentando a disponibilidade, segurança e eficiência dos processos, promovendo inovação contínua.</p></div>
+        <div class="card"><h3>👁️ Visão</h3><p>Ser referência em gestão da automação na indústria 4.0, com zero acidentes e máxima produtividade até 2030.</p></div>
+    </div>
+
+    <!-- ALERTAS (CRÍTICOS E ALERTAS) -->
+    <div class="alerts-area">
+        <div class="alert-container" id="alertsContainer"></div>
+    </div>
+
+    <!-- ABAS -->
+    <div class="tabs" id="tabs"></div>
+    
+    <div id="tabContents"></div>
+</div>
+
+<script>
+    // ======================== DADOS SIMULADOS (exemplo para demonstração) ========================
+    // Ações de vencimento (Alertas)
+    let acoesVencimento = [
+        { nome: "Calibração Válvula PV-101", dataVenc: addDays(new Date(), 5), tipo: "crítico" },
+        { nome: "Revisão Painel Elétrico", dataVenc: addDays(new Date(), 12), tipo: "alerta" },
+        { nome: "Troca Filtro Rede Pneumática", dataVenc: addDays(new Date(), 3), tipo: "crítico" },
+        { nome: "Atualização Firmware CLP", dataVenc: addDays(new Date(), 20), tipo: "alerta" },
+        { nome: "Teste de Válvula Segurança", dataVenc: addDays(new Date(), 28), tipo: "alerta" },
+        { nome: "Inspeção Termográfica", dataVenc: addDays(new Date(), 6), tipo: "crítico" },
+    ];
+
+    function addDays(date, days) { let d = new Date(date); d.setDate(d.getDate() + days); return d; }
+    function diffDays(date) { return Math.ceil((date - new Date()) / (1000 * 60 * 60 * 24)); }
+
+    function gerarAlertas() {
+        let criticos = [], alertas = [];
+        acoesVencimento.forEach(a => {
+            let diff = diffDays(a.dataVenc);
+            if (diff <= 7 && diff >= 0) criticos.push(`${a.nome} - Vence em ${diff} dias (${a.dataVenc.toLocaleDateString()})`);
+            else if (diff >= 8 && diff <= 30) alertas.push(`${a.nome} - Vence em ${diff} dias (${a.dataVenc.toLocaleDateString()})`);
+        });
+        return { criticos, alertas };
+    }
+
+    // Dados para abas (exemplos simplificados e funcionais)
+    let indicadoresData = {
+        disponibilidade: { atual: 92.5, meta: 95, parada: 7.5 },
+        beneficiamento: { atual: 88.3, meta: 90, parada: 11.7 },
+        concentracao: { atual: 78.9, meta: 82, parada: 21.1 },
+        aderenciaProgramacao: { mes: 86.4, ano: 83.2 },
+        planosSistemico: { geral: 79.5, auto: 85, inst: 72, redes: 81 },
+        maoObra: { globalMes: 91, auto: 94, inst: 88, redes: 89 }
+    };
+
+    // Segurança - DSS próximos 7
+    let dssList = [
+        { data: addDays(new Date(), 1), tema: "Uso correto de EPI", responsavel: "Elcio Rodrigues" },
+        { data: addDays(new Date(), 2), tema: "Procedimento de Bloqueio", responsavel: "Ana Silva" },
+        { data: addDays(new Date(), 3), tema: "Riscos Elétricos", responsavel: "Carlos M." },
+        { data: addDays(new Date(), 4), tema: "Comunicação de Perigo", responsavel: "Mariana F." },
+        { data: addDays(new Date(), 5), tema: "Inspeção de Ferramentas", responsavel: "João P." },
+        { data: addDays(new Date(), 6), tema: "Análise de Risco", responsavel: "Elcio Rodrigues" },
+        { data: addDays(new Date(), 7), tema: "Proteção de Máquinas", responsavel: "Gilmar P." },
+    ];
+    
+    // Rank Segurança
+    let rankSeg = [
+        { nome: "ELCIO RODRIGUES", relatos: 8, indices: 6, recusas: 4 },
+        { nome: "GILMAR PATRÍCIO", relatos: 7, indices: 9, recusas: 8 },
+        { nome: "ANA BEATRIZ", relatos: 5, indices: 4, recusas: 2 }
+    ];
+    
+    // EPIs - lista suspensa, usuários editáveis
+    let epiCadastros = [
+        { id: 1, responsavel: "Elcio Rodrigues", dataEntrega: "01/03/2025", descricao: "Capete com jugular azul", ca: "498", valCa: "09/07/2029", proxTroca: "26/02/2030", periodicidadeMeses: 60 },
+        { id: 2, responsavel: "Gilmar Patrício", dataEntrega: "10/01/2025", descricao: "Óculos de segurança", ca: "12345", valCa: "15/05/2028", proxTroca: "10/01/2026", periodicidadeMeses: 12 }
+    ];
+    let listaEPIsDisponiveis = ["Capacete com jugular azul", "Óculos de segurança", "Protetor auricular", "Luva térmica", "Bota de segurança"];
+    
+    // Programa 5S (áreas)
+    let areas5S = [
+        { id: 1, nome: "Sala de Controle", responsavel: "Elcio Rodrigues", maturidade: "Nível 3 - Padronização", percentual: 85 },
+        { id: 2, nome: "Oficina Elétrica", responsavel: "Carlos M.", maturidade: "Nível 2 - Ordem", percentual: 67 }
+    ];
+    
+    // Renderização de cada aba (conteúdo dinâmico)
+    const tabsConfig = [
+        "Indicadores", "Segurança", "Programa 5S", "Gestão de Risco", "Treinamentos", "Documentos", "Hist. de Falhas", "Projetos Concluídos", "Quadro de Equipe", "Agenda"
+    ];
+    
+    function buildTabs() {
+        const tabsDiv = document.getElementById('tabs');
+        const contentsDiv = document.getElementById('tabContents');
+        tabsDiv.innerHTML = '';
+        contentsDiv.innerHTML = '';
+        tabsConfig.forEach((tab, idx) => {
+            let btn = document.createElement('button');
+            btn.className = 'tab-btn' + (idx === 0 ? ' active' : '');
+            btn.innerText = tab;
+            btn.onclick = () => activateTab(idx);
+            tabsDiv.appendChild(btn);
+            
+            let contentDiv = document.createElement('div');
+            contentDiv.className = 'tab-content' + (idx === 0 ? ' active' : '');
+            contentDiv.id = `tab-${idx}`;
+            contentsDiv.appendChild(contentDiv);
+            renderTabContent(tab, contentDiv);
+        });
+    }
+    
+    function activateTab(activeIdx) {
+        document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+            if(i === activeIdx) btn.classList.add('active');
+            else btn.classList.remove('active');
+        });
+        document.querySelectorAll('.tab-content').forEach((cont, i) => {
+            if(i === activeIdx) cont.classList.add('active');
+            else cont.classList.remove('active');
+        });
+    }
+    
+    function renderTabContent(tabName, container) {
+        if(tabName === "Indicadores") renderIndicadores(container);
+        else if(tabName === "Segurança") renderSeguranca(container);
+        else if(tabName === "Programa 5S") renderPrograma5S(container);
+        else if(tabName === "Gestão de Risco") container.innerHTML = "<p>📋 Matriz de Riscos em desenvolvimento. Em breve gráficos e controles.</p>";
+        else if(tabName === "Treinamentos") container.innerHTML = "<p>📚 Treinamentos programados: NR12, Siemens PLC, Segurança em Automação.</p>";
+        else if(tabName === "Documentos") container.innerHTML = "<p>📁 Procedimentos, manuais e diagramas elétricos disponíveis no repositório.</p>";
+        else if(tabName === "Hist. de Falhas") container.innerHTML = "<p>⚠️ Histórico: Falha no encoder (02/04), reset do CLP (28/03).</p>";
+        else if(tabName === "Projetos Concluídos") container.innerHTML = "<p>✅ Modernização da esteira, Upgrade IHM, Sistema de supervisão.</p>";
+        else if(tabName === "Quadro de Equipe") container.innerHTML = "<p>👥 Equipe Automação: Elcio (Líder), Gilmar, Ana, Carlos, Mariana.</p>";
+        else if(tabName === "Agenda") container.innerHTML = "<p>📅 15/04 - Reunião de planejamento; 22/04 - Auditoria 5S.</p>";
+    }
+    
+    function renderIndicadores(container) {
+        let d = indicadoresData;
+        container.innerHTML = `
+            <div class="info-card"><h3>📈 Indicadores Operacionais</h3>
+                <table><tr><th>Indicador</th><th>Atual (%)</th><th>Meta (%)</th><th>Parada Corretiva (%)</th></tr>
+                <tr><td>Disponibilidade Física</td><td>${d.disponibilidade.atual}</td><td>${d.disponibilidade.meta}</td><td>${d.disponibilidade.parada}</td></tr>
+                <tr><td>Beneficiamento</td><td>${d.beneficiamento.atual}</td><td>${d.beneficiamento.meta}</td><td>${d.beneficiamento.parada}</td></tr>
+                <tr><td>Concentração</td><td>${d.concentracao.atual}</td><td>${d.concentracao.meta}</td><td>${d.concentracao.parada}</td></tr>
+            </table></div>
+            <div class="info-card"><h3>📊 Aderência a Programação</h3><p>Mês: ${d.aderenciaProgramacao.mes}% | Ano: ${d.aderenciaProgramacao.ano}%</p></div>
+            <div class="info-card"><h3>✅ Cumprimento de Planos Sistêmico</h3><p>Geral: ${d.planosSistemico.geral}% | AUTO: ${d.planosSistemico.auto}% | INST: ${d.planosSistemico.inst}% | REDES: ${d.planosSistemico.redes}%</p></div>
+            <div class="info-card"><h3>👥 Apropriação de Mão de Obra</h3><p>Global mês: ${d.maoObra.globalMes}% | AUTO: ${d.maoObra.auto}% | INST: ${d.maoObra.inst}% | REDES: ${d.maoObra.redes}%</p></div>
+        `;
+    }
+    
+    function renderSeguranca(container) {
+        // DSS próximos 7 (ignorar datas passadas)
+        let hoje = new Date();
+        let futuros = dssList.filter(d => d.data >= hoje).slice(0,7);
+        let dssHtml = futuros.map(d => `<div style="background:#eef2f5; margin:8px; padding:10px; border-radius:12px;">${d.data.toLocaleDateString('pt-br', {weekday:'short'}).toUpperCase().slice(0,3)} ${d.data.toLocaleDateString()}<br><strong>Tema:</strong> ${d.tema}<br><strong>Responsável:</strong> ${d.responsavel}</div>`).join('');
+        // Rank
+        let rankCalc = [...rankSeg].map(r => ({ ...r, pontos: (r.recusas*20)+(r.relatos*10)+(r.indices*5) })).sort((a,b)=>b.pontos-a.pontos);
+        let rankHtml = `<table><tr><th>Pos</th><th>Nome</th><th>REL</th><th>IND</th><th>REC</th><th>Pts</th></tr>` + 
+            rankCalc.map((r,i)=>`<tr><td>${i+1}°</td><td>${r.nome}</td><td>${r.relatos}</td><td>${r.indices}</td><td>${r.recusas}</td><td>${r.pontos}</td></tr>`).join('') + `</table>`;
+        
+        // EPI com edição e cadastro
+        let epiHtml = `<div class="filter-bar"><input type="text" id="filtroNomeEPI" placeholder="Filtrar por colaborador"><button onclick="filtrarEPIs()">Filtrar</button> <button onclick="abrirCadastroUsuario()">Novo Usuário/EPI</button></div>
+        <div id="listaEPIs">${renderEPIList(epiCadastros)}</div>`;
+        
+        container.innerHTML = `
+            <div class="info-card"><h3>📅 Planejamento DSS (Próximos 7 dias)</h3><div style="display:flex; flex-wrap:wrap;">${dssHtml}</div></div>
+            <div class="info-card"><h3>🏆 Rank de Segurança - ${new Date().toLocaleString('default', { month: 'long' })}</h3>${rankHtml}</div>
+            <div class="info-card"><h3>🛡️ Controle de EPIs</h3>${epiHtml}</div>
+        `;
+        window.filtrarEPIs = () => {
+            let filtro = document.getElementById('filtroNomeEPI').value.toLowerCase();
+            let filtrados = epiCadastros.filter(e => e.responsavel.toLowerCase().includes(filtro));
+            document.getElementById('listaEPIs').innerHTML = renderEPIList(filtrados);
+        };
+        window.abrirCadastroUsuario = () => {
+            let nome = prompt("Nome do responsável:");
+            if(nome){
+                let epiSel = prompt(`Selecione EPI:\n${listaEPIsDisponiveis.join(", ")}`);
+                let dataEntrega = prompt("Data entrega (DD/MM/AAAA)");
+                let ca = prompt("N° do CA");
+                let valCa = prompt("Validade CA");
+                let periodicidade = prompt("Periodicidade (meses) para troca:");
+                let proxTrocaCalc = new Date();
+                proxTrocaCalc.setMonth(proxTrocaCalc.getMonth() + parseInt(periodicidade));
+                let proxTrocaStr = proxTrocaCalc.toLocaleDateString();
+                epiCadastros.push({
+                    id: Date.now(), responsavel: nome, dataEntrega: dataEntrega, descricao: epiSel, ca: ca, valCa: valCa, proxTroca: proxTrocaStr, periodicidadeMeses: parseInt(periodicidade)
+                });
+                document.getElementById('listaEPIs').innerHTML = renderEPIList(epiCadastros);
+            }
+        };
+        window.editarEPI = (id) => {
+            let epi = epiCadastros.find(e=>e.id==id);
+            if(epi){
+                epi.dataEntrega = prompt("Nova data entrega:", epi.dataEntrega) || epi.dataEntrega;
+                epi.proxTroca = prompt("Próx. troca:", epi.proxTroca) || epi.proxTroca;
+                document.getElementById('listaEPIs').innerHTML = renderEPIList(epiCadastros);
+            }
+        };
+    }
+    
+    function renderEPIList(lista){
+        return `<table><tr><th>Responsável</th><th>Data Entrega</th><th>EPI</th><th>CA</th><th>Validade CA</th><th>Próx Troca</th><th>Ações</th></tr>`+
+            lista.map(e=>`<tr><td>${e.responsavel}</td><td>${e.dataEntrega}</td><td>${e.descricao}</td><td>${e.ca}</td><td>${e.valCa}</td><td>${e.proxTroca}</td><td><button class="btn-edit" onclick="editarEPI(${e.id})">Editar</button></td></tr>`).join('')+`</table>`;
+    }
+    
+    function renderPrograma5S(container) {
+        let areasHtml = areas5S.map(a => `<div style="border:1px solid #ddd; margin:10px; padding:15px; border-radius:12px;">
+            <strong>📍 ${a.nome}</strong><br>Responsável: ${a.responsavel}<br>Maturidade Dupont: ${a.maturidade}<br>% Questionário: ${a.percentual}%
+            <button class="btn-edit" onclick="editarArea5S(${a.id})">Editar</button>
+        </div>`).join('');
+        container.innerHTML = `<div class="info-card"><h3>🏭 Programa 5S - Maturidade Segurança</h3><div id="areas5SList">${areasHtml}</div>
+        <button class="btn-edit" onclick="cadastrarArea5S()">+ Nova Área / Perguntas</button></div>`;
+        window.editarArea5S = (id) => {
+            let area = areas5S.find(a=>a.id===id);
+            if(area){
+                area.percentual = prompt("Novo percentual de atendimento (0-100):", area.percentual);
+                area.maturidade = prompt("Nova maturidade Dupont:", area.maturidade);
+                renderPrograma5S(document.querySelector('#tab-2')); // recarrega
+            }
+        };
+        window.cadastrarArea5S = () => {
+            let nome = prompt("Nome da área:");
+            let resp = prompt("Responsável:");
+            areas5S.push({ id: Date.now(), nome: nome, responsavel: resp, maturidade: "Nível 1 - Inicial", percentual: 0 });
+            renderPrograma5S(document.querySelector('#tab-2'));
+        };
+    }
+    
+    // Relógio e alertas
+    function updateClock(){
+        let now = new Date();
+        let timeStr = now.toLocaleTimeString('pt-br');
+        let weekdays = ["DOM", "SEG", "TER", "QUA", "QUI", "SEX", "SAB"];
+        let day = weekdays[now.getDay()];
+        let dayNum = now.getDate().toString().padStart(2,'0');
+        let month = now.toLocaleString('pt-br', { month: 'short' }).toUpperCase().slice(0,3);
+        let dateStr = `${day} ${dayNum} ${month}`;
+        document.getElementById('liveClock').innerText = timeStr;
+        document.getElementById('liveDate').innerText = dateStr;
+    }
+    
+    function renderAlertas(){
+        let { criticos, alertas } = gerarAlertas();
+        let container = document.getElementById('alertsContainer');
+        container.innerHTML = `
+            <div class="alert-box critical"><h4>🔴 CRÍTICOS (≤7 dias)</h4><div class="alert-list">${criticos.length ? criticos.map(c=>`<div class="alert-item crit">⚠️ ${c}</div>`).join('') : '<div>Nenhum crítico</div>'}</div></div>
+            <div class="alert-box warning"><h4>🟡 ALERTAS (8-30 dias)</h4><div class="alert-list">${alertas.length ? alertas.map(a=>`<div>⚠️ ${a}</div>`).join('') : '<div>Nenhum alerta</div>'}</div></div>
+        `;
+    }
+    
+    setInterval(()=>{ updateClock(); renderAlertas(); }, 1000);
+    updateClock();
+    renderAlertas();
+    buildTabs();
+</script>
+</body>
+</html>
