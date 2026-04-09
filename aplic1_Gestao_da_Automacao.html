@@ -1,1 +1,505 @@
-<!DOCTYPE html><html lang="pt-br"><head>    <meta charset="UTF-8">    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">    <title>Gestão da Automação</title>    <style>        * {            margin: 0;            padding: 0;            box-sizing: border-box;            font-family: 'Segoe UI', 'Barlow Condensed', Tahoma, Geneva, Verdana, sans-serif;        }        body {            background: #0a0a0c;            padding: 0;            margin: 0;            color: #e8e8f0;        }        /* Container principal */        .container {            max-width: 1400px;            margin: 0 auto;            background: #0a0a0c;            min-height: 100vh;            display: flex;            flex-direction: column;        }        /* Cabeçalho */        .header {            background: linear-gradient(135deg, #1a3c34, #0e2a23);            color: white;            padding: 15px 20px;            display: flex;            justify-content: space-between;            align-items: center;            flex-wrap: wrap;            gap: 10px;            position: sticky;            top: 0;            z-index: 100;        }        .app-title h1 {            font-size: 1.4rem;            letter-spacing: 1px;            font-weight: 700;        }        .app-title p {            font-size: 0.7rem;            opacity: 0.8;            letter-spacing: 1px;        }        .clock {            text-align: right;            background: rgba(255,255,255,0.1);            padding: 6px 12px;            border-radius: 12px;        }        .time {            font-size: 1.5rem;            font-weight: bold;            font-family: 'Share Tech Mono', monospace;            line-height: 1.2;        }        .date {            font-size: 0.7rem;            opacity: 0.8;        }        /* Missão e Visão */        .mission-vision {            display: flex;            gap: 12px;            padding: 15px 20px;            background: #0f0f16;            border-bottom: 1px solid #2a2a35;        }        .card {            flex: 1;            background: #13131a;            padding: 12px;            border-radius: 12px;            border-left: 3px solid #ff6a00;        }        .card h3 {            color: #ff6a00;            margin-bottom: 6px;            font-size: 0.9rem;            letter-spacing: 1px;        }        .card p {            color: #aaaacc;            font-size: 0.75rem;            line-height: 1.4;        }        /* Alertas */        .alerts-area {            padding: 12px 20px;        }        .alert-container {            display: flex;            gap: 12px;            flex-wrap: wrap;        }        .alert-box {            flex: 1;            border-radius: 12px;            padding: 10px;            background: #13131a;        }        .critical { border-top: 3px solid #ff1744; background: #1a0a0a; }        .warning { border-top: 3px solid #ffd600; background: #1a1a0a; }        .alert-box h4 { font-size: 0.85rem; margin-bottom: 6px; }        .alert-list { max-height: 150px; overflow-y: auto; font-size: 0.7rem; }        .alert-item { padding: 4px 0; border-bottom: 1px solid #2a2a35; }        .alert-item.crit { color: #ff1744; }        /* Abas */        .tabs {            display: flex;            flex-wrap: nowrap;            overflow-x: auto;            background: #0d0d10;            border-bottom: 1px solid #2a2a35;            padding: 0 12px;            gap: 4px;            scrollbar-width: thin;            position: sticky;            top: 70px;            z-index: 90;        }        .tabs::-webkit-scrollbar { height: 3px; }        .tab-btn {            background: transparent;            border: none;            padding: 8px 14px;            font-size: 0.75rem;            font-weight: 600;            cursor: pointer;            color: #666680;            white-space: nowrap;            border-bottom: 2px solid transparent;        }        .tab-btn.active {            color: #ff6a00;            border-bottom-color: #ff6a00;        }        .tab-content {            padding: 16px;            display: none;            flex: 1;        }        .tab-content.active { display: block; }        /* Cards genéricos */        .info-card {            background: #13131a;            border-radius: 12px;            padding: 12px;            margin-bottom: 16px;            border: 1px solid #2a2a35;        }        .info-card h3 {            color: #ff6a00;            font-size: 0.9rem;            margin-bottom: 10px;            border-left: 3px solid #ff6a00;            padding-left: 8px;        }        table {            width: 100%;            border-collapse: collapse;            font-size: 0.7rem;        }        th, td {            padding: 6px 4px;            text-align: left;            border-bottom: 1px solid #2a2a35;        }        th { color: #ff9500; }        .badge {            padding: 2px 6px;            border-radius: 12px;            font-size: 0.6rem;            font-weight: bold;        }        .btn-edit {            background: #ff6a00;            color: #000;            border: none;            padding: 4px 8px;            border-radius: 6px;            cursor: pointer;            font-size: 0.7rem;            font-weight: bold;        }        input, select, textarea {            padding: 6px;            border: 1px solid #2a2a35;            border-radius: 6px;            background: #0d0d14;            color: #e8e8f0;            font-size: 0.75rem;            width: 100%;        }        .filter-bar {            display: flex;            gap: 6px;            margin-bottom: 12px;            flex-wrap: wrap;        }        .grid-2cols {            display: grid;            grid-template-columns: 1fr 1fr;            gap: 8px;        }        .dss-item, .rank-item, .epi-item {            background: #0d0d14;            border: 1px solid #2a2a35;            border-radius: 8px;            padding: 8px;            margin-bottom: 6px;        }        .footer {            background: #0d0d10;            border-top: 1px solid #2a2a35;            padding: 8px;            text-align: center;            font-size: 0.6rem;            color: #666680;            margin-top: auto;        }    </style></head><body><div class="container">    <div class="header">        <div class="app-title">            <h1>📊 Gestão da Automação</h1>            <p>Mina do Andrade · Supervisão</p>        </div>        <div class="clock">            <div class="time" id="liveClock">--:--:--</div>            <div class="date" id="liveDate">---, -- ---</div>        </div>    </div>    <div class="mission-vision">        <div class="card"><h3>🎯 Missão</h3><p id="missaoText">Garantir a excelência operacional através da automação industrial, aumentando a disponibilidade, segurança e eficiência dos processos.</p></div>        <div class="card"><h3>👁️ Visão</h3><p id="visaoText">Ser referência em gestão da automação na indústria 4.0, com zero acidentes e máxima produtividade até 2030.</p></div>    </div>    <div class="alerts-area">        <div class="alert-container" id="alertsContainer"></div>    </div>    <div class="tabs" id="tabs"></div>    <div id="tabContents"></div>    <div class="footer">ArcelorMittal Brasil · Automação · Dados em tempo real</div></div><script>    // ======================== DADOS (conforme documentação) ========================    function addDays(date, days) { let d = new Date(date); d.setDate(d.getDate() + days); return d; }    function diffDays(date) { return Math.ceil((date - new Date()) / (1000 * 60 * 60 * 24)); }    let acoesVencimento = [        { nome: "Calibração Válvula PV-101", dataVenc: addDays(new Date(), 5) },        { nome: "Revisão Painel Elétrico", dataVenc: addDays(new Date(), 12) },        { nome: "Troca Filtro Rede Pneumática", dataVenc: addDays(new Date(), 3) },        { nome: "Atualização Firmware CLP", dataVenc: addDays(new Date(), 20) },        { nome: "Teste de Válvula Segurança", dataVenc: addDays(new Date(), 28) },        { nome: "Inspeção Termográfica", dataVenc: addDays(new Date(), 6) },    ];    function gerarAlertas() {        let criticos = [], alertas = [];        acoesVencimento.forEach(a => {            let diff = diffDays(a.dataVenc);            if (diff <= 7 && diff >= 0) criticos.push(`${a.nome} - Vence em ${diff} dias`);            else if (diff >= 8 && diff <= 30) alertas.push(`${a.nome} - Vence em ${diff} dias`);        });        return { criticos, alertas };    }    // Dados completos conforme documentação    let dashboardData = {        indicadores: {            disponibilidade: { atual: 92.5, meta: 95, parada: 7.5 },            beneficiamento: { atual: 88.3, meta: 90, parada: 11.7 },            concentracao: { atual: 78.9, meta: 82, parada: 21.1 },            aderencia: { mes: 86.4, ano: 83.2 },            planos: { geral: 79.5, auto: 85, inst: 72, redes: 81 },            maoObra: { global: 91, auto: 94, inst: 88, redes: 89 }        },        dss: [            { data: addDays(new Date(), 1), tema: "Uso correto de EPI", responsavel: "Elcio Rodrigues" },            { data: addDays(new Date(), 2), tema: "Procedimento de Bloqueio", responsavel: "Ana Silva" },            { data: addDays(new Date(), 3), tema: "Riscos Elétricos", responsavel: "Carlos M." },            { data: addDays(new Date(), 4), tema: "Comunicação de Perigo", responsavel: "Mariana F." },            { data: addDays(new Date(), 5), tema: "Inspeção de Ferramentas", responsavel: "João P." },            { data: addDays(new Date(), 6), tema: "Análise de Risco", responsavel: "Elcio Rodrigues" },            { data: addDays(new Date(), 7), tema: "Proteção de Máquinas", responsavel: "Gilmar P." }        ],        rank: [            { nome: "ELCIO RODRIGUES", relatos: 8, indices: 6, recusas: 4 },            { nome: "GILMAR PATRÍCIO", relatos: 7, indices: 9, recusas: 8 },            { nome: "ANA BEATRIZ", relatos: 5, indices: 4, recusas: 2 }        ],        epi: [            { id: 1, responsavel: "Elcio Rodrigues", dataEntrega: "01/03/2025", descricao: "Capacete com jugular azul", ca: "498", valCa: "09/07/2029", proxTroca: "26/02/2030" },            { id: 2, responsavel: "Gilmar Patrício", dataEntrega: "10/01/2025", descricao: "Óculos de segurança", ca: "12345", valCa: "15/05/2028", proxTroca: "10/01/2026" }        ],        areas5S: [            { id: 1, nome: "Sala de Controle", responsavel: "Elcio Rodrigues", maturidade: "Nível 3 - Padronização", percentual: 85 },            { id: 2, nome: "Oficina Elétrica", responsavel: "Carlos M.", maturidade: "Nível 2 - Ordem", percentual: 67 }        ],        gestaoRisco: [            { disciplina: "AUTO", descricao: "Falha no CLP da Britagem", acao: "Substituir fonte", responsavel: "André", prazo: "20/04/2026" }        ],        treinamentos: [            { nome: "NR-10 Básico", colaborador: "Elcio Rodrigues", vencimento: "15/05/2026" },            { nome: "SAP PM", colaborador: "Gilmar Patrício", vencimento: "10/04/2026" }        ],        documentos: [            { nome: "Manual CLP Controllogix", versao: "2.0", link: "#" }        ],        historicoFalhas: [            { equipamento: "CLP-01", falha: "Perda de comunicação", data: "05/04/2026", status: "Corrigido" }        ],        projetosConcluidos: [            { nome: "Modernização IHM Britagem", data: "03/2026", responsavel: "Samuell" }        ],        equipe: [            { nome: "Elcio Rodrigues", funcao: "Técnico Instr.", disponibilidade: "Disponível" },            { nome: "Gilmar Patrício", funcao: "Técnico Instr.", disponibilidade: "Em treinamento" }        ],        agenda: [            { data: "10/04/2026", evento: "Reunião de Planejamento", local: "Sala A" }        ]    };    // Renderização das abas    const tabsConfig = ["Indicadores", "Segurança", "EPI", "5S", "Gestão de Risco", "Treinamentos", "Documentos", "Hist. de Falhas", "Projetos Concluídos", "Quadro de Equipe", "Agenda"];    function buildTabs() {        const tabsDiv = document.getElementById('tabs');        const contentsDiv = document.getElementById('tabContents');        tabsDiv.innerHTML = '';        contentsDiv.innerHTML = '';        tabsConfig.forEach((tab, idx) => {            let btn = document.createElement('button');            btn.className = 'tab-btn' + (idx === 0 ? ' active' : '');            btn.innerText = tab;            btn.onclick = () => activateTab(idx);            tabsDiv.appendChild(btn);                        let contentDiv = document.createElement('div');            contentDiv.className = 'tab-content' + (idx === 0 ? ' active' : '');            contentDiv.id = `tab-${idx}`;            contentsDiv.appendChild(contentDiv);            renderTabContent(tab, contentDiv);        });    }    function activateTab(activeIdx) {        document.querySelectorAll('.tab-btn').forEach((btn, i) => {            if(i === activeIdx) btn.classList.add('active');            else btn.classList.remove('active');        });        document.querySelectorAll('.tab-content').forEach((cont, i) => {            if(i === activeIdx) cont.classList.add('active');            else cont.classList.remove('active');        });    }    function renderTabContent(tabName, container) {        if(tabName === "Indicadores") renderIndicadores(container);        else if(tabName === "Segurança") renderSeguranca(container);        else if(tabName === "EPI") renderEPI(container);        else if(tabName === "5S") render5S(container);        else if(tabName === "Gestão de Risco") renderRisco(container);        else if(tabName === "Treinamentos") renderTreinamentos(container);        else if(tabName === "Documentos") renderDocumentos(container);        else if(tabName === "Hist. de Falhas") renderFalhas(container);        else if(tabName === "Projetos Concluídos") renderProjetos(container);        else if(tabName === "Quadro de Equipe") renderEquipe(container);        else if(tabName === "Agenda") renderAgenda(container);    }    function renderIndicadores(container) {        let d = dashboardData.indicadores;        container.innerHTML = `            <div class="info-card"><h3>📈 Indicadores Operacionais</h3>                <table><tr><th>Indicador</th><th>Atual (%)</th><th>Meta (%)</th><th>Parada (%)</th></tr>                <tr><td>Disponibilidade Física</td><td>${d.disponibilidade.atual}</td><td>${d.disponibilidade.meta}</td><td>${d.disponibilidade.parada}</td></tr>                <tr><td>Beneficiamento</td><td>${d.beneficiamento.atual}</td><td>${d.beneficiamento.meta}</td><td>${d.beneficiamento.parada}</td></tr>                <tr><td>Concentração</td><td>${d.concentracao.atual}</td><td>${d.concentracao.meta}</td><td>${d.concentracao.parada}</td></tr>            </table></div>            <div class="info-card"><h3>📊 Aderência a Programação</h3><p>Mês: ${d.aderencia.mes}% | Ano: ${d.aderencia.ano}%</p></div>            <div class="info-card"><h3>✅ Cumprimento de Planos</h3><p>Geral: ${d.planos.geral}% | AUTO: ${d.planos.auto}% | INST: ${d.planos.inst}% | REDES: ${d.planos.redes}%</p></div>            <div class="info-card"><h3>👥 Apropriação Mão de Obra</h3><p>Global: ${d.maoObra.global}% | AUTO: ${d.maoObra.auto}% | INST: ${d.maoObra.inst}% | REDES: ${d.maoObra.redes}%</p></div>        `;    }    function renderSeguranca(container) {        let hoje = new Date();        let futuros = dashboardData.dss.filter(d => d.data >= hoje).slice(0,7);        let dssHtml = futuros.map(d => `<div style="background:#0d0d14; margin:6px; padding:8px; border-radius:8px;">${d.data.toLocaleDateString('pt-br', {weekday:'short'}).toUpperCase()} ${d.data.toLocaleDateString()}<br><strong>Tema:</strong> ${d.tema}<br><strong>Responsável:</strong> ${d.responsavel}</div>`).join('');                let rankCalc = [...dashboardData.rank].map(r => ({ ...r, pontos: (r.recusas*20)+(r.relatos*10)+(r.indices*5) })).sort((a,b)=>b.pontos-a.pontos);        let rankHtml = `<table><tr><th>Pos</th><th>Nome</th><th>REL</th><th>IND</th><th>REC</th><th>Pts</th></tr>` + rankCalc.map((r,i)=>`<tr><td>${i+1}°</td><td>${r.nome}</td><td>${r.relatos}</td><td>${r.indices}</td><td>${r.recusas}</td><td>${r.pontos}</td></tr>`).join('') + `</table>`;                container.innerHTML = `            <div class="info-card"><h3>📅 Planejamento DSS</h3><div style="display:flex; flex-wrap:wrap;">${dssHtml}</div></div>            <div class="info-card"><h3>🏆 Rank de Segurança</h3>${rankHtml}</div>        `;    }    function renderEPI(container) {        let epiHtml = `<table><tr><th>Responsável</th><th>Data Entrega</th><th>EPI</th><th>CA</th><th>Validade CA</th><th>Próx Troca</th></tr>` +            dashboardData.epi.map(e => `<tr><td>${e.responsavel}</td><td>${e.dataEntrega}</td><td>${e.descricao}</td><td>${e.ca}</td><td>${e.valCa}</td><td>${e.proxTroca}</td></tr>`).join('') + `</table>`;        container.innerHTML = `<div class="info-card"><h3>🛡️ Controle de EPIs</h3>${epiHtml}</div>`;    }    function render5S(container) {        let areasHtml = dashboardData.areas5S.map(a => `<div style="border:1px solid #2a2a35; margin:8px; padding:10px; border-radius:8px;"><strong>📍 ${a.nome}</strong><br>Responsável: ${a.responsavel}<br>Maturidade: ${a.maturidade}<br>% Questionário: ${a.percentual}%</div>`).join('');        container.innerHTML = `<div class="info-card"><h3>🏭 Programa 5S - Maturidade</h3>${areasHtml}</div>`;    }    function renderRisco(container) {        let riscoHtml = dashboardData.gestaoRisco.map(r => `<div class="dss-item"><strong>${r.disciplina}</strong><br>${r.descricao}<br>Ação: ${r.acao}<br>Responsável: ${r.responsavel}<br>Prazo: ${r.prazo}</div>`).join('');        container.innerHTML = `<div class="info-card"><h3>⚠️ Gestão de Riscos</h3>${riscoHtml}</div>`;    }    function renderTreinamentos(container) {        let treinHtml = dashboardData.treinamentos.map(t => `<div class="dss-item"><strong>${t.nome}</strong><br>👤 ${t.colaborador}<br>📅 Vencimento: ${t.vencimento}</div>`).join('');        container.innerHTML = `<div class="info-card"><h3>📚 Treinamentos</h3>${treinHtml}</div>`;    }    function renderDocumentos(container) {        let docHtml = dashboardData.documentos.map(d => `<div class="dss-item"><strong>${d.nome}</strong><br>Versão: ${d.versao}<br><a href="${d.link}" style="color:#ff6a00;">Acessar</a></div>`).join('');        container.innerHTML = `<div class="info-card"><h3>📁 Documentos Técnicos</h3>${docHtml}</div>`;    }    function renderFalhas(container) {        let falhasHtml = dashboardData.historicoFalhas.map(f => `<div class="dss-item"><strong>${f.equipamento}</strong><br>Falha: ${f.falha}<br>Data: ${f.data}<br>Status: ${f.status}</div>`).join('');        container.innerHTML = `<div class="info-card"><h3>⚠️ Histórico de Falhas</h3>${falhasHtml}</div>`;    }    function renderProjetos(container) {        let projHtml = dashboardData.projetosConcluidos.map(p => `<div class="dss-item"><strong>${p.nome}</strong><br>Data: ${p.data}<br>Responsável: ${p.responsavel}</div>`).join('');        container.innerHTML = `<div class="info-card"><h3>✅ Projetos Concluídos</h3>${projHtml}</div>`;    }    function renderEquipe(container) {        let equipeHtml = dashboardData.equipe.map(e => `<div class="dss-item"><strong>${e.nome}</strong><br>Função: ${e.funcao}<br>Status: ${e.disponibilidade}</div>`).join('');        container.innerHTML = `<div class="info-card"><h3>👥 Quadro de Equipe</h3>${equipeHtml}</div>`;    }    function renderAgenda(container) {        let agendaHtml = dashboardData.agenda.map(a => `<div class="dss-item"><strong>📅 ${a.data}</strong><br>${a.evento}<br>📍 ${a.local}</div>`).join('');        container.innerHTML = `<div class="info-card"><h3>📅 Agenda</h3>${agendaHtml}</div>`;    }    // Relógio e alertas    function updateClock(){        let now = new Date();        let timeStr = now.toLocaleTimeString('pt-br');        let weekdays = ["DOM", "SEG", "TER", "QUA", "QUI", "SEX", "SAB"];        let day = weekdays[now.getDay()];        let dayNum = now.getDate().toString().padStart(2,'0');        let month = now.toLocaleString('pt-br', { month: 'short' }).toUpperCase().slice(0,3);        let dateStr = `${day} ${dayNum} ${month}`;        document.getElementById('liveClock').innerText = timeStr;        document.getElementById('liveDate').innerText = dateStr;    }    function renderAlertas(){        let { criticos, alertas } = gerarAlertas();        let container = document.getElementById('alertsContainer');        container.innerHTML = `            <div class="alert-box critical"><h4>🔴 CRÍTICOS (≤7 dias)</h4><div class="alert-list">${criticos.length ? criticos.map(c=>`<div class="alert-item crit">⚠️ ${c}</div>`).join('') : '<div>Nenhum crítico</div>'}</div></div>            <div class="alert-box warning"><h4>🟡 ALERTAS (8-30 dias)</h4><div class="alert-list">${alertas.length ? alertas.map(a=>`<div>⚠️ ${a}</div>`).join('') : '<div>Nenhum alerta</div>'}</div></div>        `;    }    setInterval(()=>{ updateClock(); renderAlertas(); }, 1000);    updateClock();    renderAlertas();    buildTabs();</script></body></html>
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+    <title>Gestão da Automação</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Barlow Condensed', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #0a0a0c;
+            padding: 0;
+            margin: 0;
+            color: #e8e8f0;
+        }
+
+        /* Container principal */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #0a0a0c;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Cabeçalho */
+        .header {
+            background: linear-gradient(135deg, #1a3c34, #0e2a23);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .app-title h1 {
+            font-size: 1.4rem;
+            letter-spacing: 1px;
+            font-weight: 700;
+        }
+        .app-title p {
+            font-size: 0.7rem;
+            opacity: 0.8;
+            letter-spacing: 1px;
+        }
+
+        .clock {
+            text-align: right;
+            background: rgba(255,255,255,0.1);
+            padding: 6px 12px;
+            border-radius: 12px;
+        }
+
+        .time {
+            font-size: 1.5rem;
+            font-weight: bold;
+            font-family: 'Share Tech Mono', monospace;
+            line-height: 1.2;
+        }
+
+        .date {
+            font-size: 0.7rem;
+            opacity: 0.8;
+        }
+
+        /* Missão e Visão */
+        .mission-vision {
+            display: flex;
+            gap: 12px;
+            padding: 15px 20px;
+            background: #0f0f16;
+            border-bottom: 1px solid #2a2a35;
+        }
+
+        .card {
+            flex: 1;
+            background: #13131a;
+            padding: 12px;
+            border-radius: 12px;
+            border-left: 3px solid #ff6a00;
+        }
+
+        .card h3 {
+            color: #ff6a00;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        .card p {
+            color: #aaaacc;
+            font-size: 0.75rem;
+            line-height: 1.4;
+        }
+
+        /* Alertas */
+        .alerts-area {
+            padding: 12px 20px;
+        }
+        .alert-container {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .alert-box {
+            flex: 1;
+            border-radius: 12px;
+            padding: 10px;
+            background: #13131a;
+        }
+        .critical { border-top: 3px solid #ff1744; background: #1a0a0a; }
+        .warning { border-top: 3px solid #ffd600; background: #1a1a0a; }
+        .alert-box h4 { font-size: 0.85rem; margin-bottom: 6px; }
+        .alert-list { max-height: 150px; overflow-y: auto; font-size: 0.7rem; }
+        .alert-item { padding: 4px 0; border-bottom: 1px solid #2a2a35; }
+        .alert-item.crit { color: #ff1744; }
+
+        /* Abas */
+        .tabs {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            background: #0d0d10;
+            border-bottom: 1px solid #2a2a35;
+            padding: 0 12px;
+            gap: 4px;
+            scrollbar-width: thin;
+            position: sticky;
+            top: 70px;
+            z-index: 90;
+        }
+        .tabs::-webkit-scrollbar { height: 3px; }
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 8px 14px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: #666680;
+            white-space: nowrap;
+            border-bottom: 2px solid transparent;
+        }
+        .tab-btn.active {
+            color: #ff6a00;
+            border-bottom-color: #ff6a00;
+        }
+        .tab-content {
+            padding: 16px;
+            display: none;
+            flex: 1;
+        }
+        .tab-content.active { display: block; }
+
+        /* Cards genéricos */
+        .info-card {
+            background: #13131a;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 16px;
+            border: 1px solid #2a2a35;
+        }
+        .info-card h3 {
+            color: #ff6a00;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            border-left: 3px solid #ff6a00;
+            padding-left: 8px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.7rem;
+        }
+        th, td {
+            padding: 6px 4px;
+            text-align: left;
+            border-bottom: 1px solid #2a2a35;
+        }
+        th { color: #ff9500; }
+        .badge {
+            padding: 2px 6px;
+            border-radius: 12px;
+            font-size: 0.6rem;
+            font-weight: bold;
+        }
+        .btn-edit {
+            background: #ff6a00;
+            color: #000;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+        input, select, textarea {
+            padding: 6px;
+            border: 1px solid #2a2a35;
+            border-radius: 6px;
+            background: #0d0d14;
+            color: #e8e8f0;
+            font-size: 0.75rem;
+            width: 100%;
+        }
+        .filter-bar {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        .grid-2cols {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        .dss-item, .rank-item, .epi-item {
+            background: #0d0d14;
+            border: 1px solid #2a2a35;
+            border-radius: 8px;
+            padding: 8px;
+            margin-bottom: 6px;
+        }
+        .footer {
+            background: #0d0d10;
+            border-top: 1px solid #2a2a35;
+            padding: 8px;
+            text-align: center;
+            font-size: 0.6rem;
+            color: #666680;
+            margin-top: auto;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="app-title">
+            <h1>📊 Gestão da Automação</h1>
+            <p>Mina do Andrade · Supervisão</p>
+        </div>
+        <div class="clock">
+            <div class="time" id="liveClock">--:--:--</div>
+            <div class="date" id="liveDate">---, -- ---</div>
+        </div>
+    </div>
+
+    <div class="mission-vision">
+        <div class="card"><h3>🎯 Missão</h3><p id="missaoText">Garantir a excelência operacional através da automação industrial, aumentando a disponibilidade, segurança e eficiência dos processos.</p></div>
+        <div class="card"><h3>👁️ Visão</h3><p id="visaoText">Ser referência em gestão da automação na indústria 4.0, com zero acidentes e máxima produtividade até 2030.</p></div>
+    </div>
+
+    <div class="alerts-area">
+        <div class="alert-container" id="alertsContainer"></div>
+    </div>
+
+    <div class="tabs" id="tabs"></div>
+    <div id="tabContents"></div>
+    <div class="footer">ArcelorMittal Brasil · Automação · Dados em tempo real</div>
+</div>
+
+<script>
+    // ======================== DADOS (conforme documentação) ========================
+    function addDays(date, days) { let d = new Date(date); d.setDate(d.getDate() + days); return d; }
+    function diffDays(date) { return Math.ceil((date - new Date()) / (1000 * 60 * 60 * 24)); }
+
+    let acoesVencimento = [
+        { nome: "Calibração Válvula PV-101", dataVenc: addDays(new Date(), 5) },
+        { nome: "Revisão Painel Elétrico", dataVenc: addDays(new Date(), 12) },
+        { nome: "Troca Filtro Rede Pneumática", dataVenc: addDays(new Date(), 3) },
+        { nome: "Atualização Firmware CLP", dataVenc: addDays(new Date(), 20) },
+        { nome: "Teste de Válvula Segurança", dataVenc: addDays(new Date(), 28) },
+        { nome: "Inspeção Termográfica", dataVenc: addDays(new Date(), 6) },
+    ];
+
+    function gerarAlertas() {
+        let criticos = [], alertas = [];
+        acoesVencimento.forEach(a => {
+            let diff = diffDays(a.dataVenc);
+            if (diff <= 7 && diff >= 0) criticos.push(`${a.nome} - Vence em ${diff} dias`);
+            else if (diff >= 8 && diff <= 30) alertas.push(`${a.nome} - Vence em ${diff} dias`);
+        });
+        return { criticos, alertas };
+    }
+
+    // Dados completos conforme documentação
+    let dashboardData = {
+        indicadores: {
+            disponibilidade: { atual: 92.5, meta: 95, parada: 7.5 },
+            beneficiamento: { atual: 88.3, meta: 90, parada: 11.7 },
+            concentracao: { atual: 78.9, meta: 82, parada: 21.1 },
+            aderencia: { mes: 86.4, ano: 83.2 },
+            planos: { geral: 79.5, auto: 85, inst: 72, redes: 81 },
+            maoObra: { global: 91, auto: 94, inst: 88, redes: 89 }
+        },
+        dss: [
+            { data: addDays(new Date(), 1), tema: "Uso correto de EPI", responsavel: "Elcio Rodrigues" },
+            { data: addDays(new Date(), 2), tema: "Procedimento de Bloqueio", responsavel: "Ana Silva" },
+            { data: addDays(new Date(), 3), tema: "Riscos Elétricos", responsavel: "Carlos M." },
+            { data: addDays(new Date(), 4), tema: "Comunicação de Perigo", responsavel: "Mariana F." },
+            { data: addDays(new Date(), 5), tema: "Inspeção de Ferramentas", responsavel: "João P." },
+            { data: addDays(new Date(), 6), tema: "Análise de Risco", responsavel: "Elcio Rodrigues" },
+            { data: addDays(new Date(), 7), tema: "Proteção de Máquinas", responsavel: "Gilmar P." }
+        ],
+        rank: [
+            { nome: "ELCIO RODRIGUES", relatos: 8, indices: 6, recusas: 4 },
+            { nome: "GILMAR PATRÍCIO", relatos: 7, indices: 9, recusas: 8 },
+            { nome: "ANA BEATRIZ", relatos: 5, indices: 4, recusas: 2 }
+        ],
+        epi: [
+            { id: 1, responsavel: "Elcio Rodrigues", dataEntrega: "01/03/2025", descricao: "Capacete com jugular azul", ca: "498", valCa: "09/07/2029", proxTroca: "26/02/2030" },
+            { id: 2, responsavel: "Gilmar Patrício", dataEntrega: "10/01/2025", descricao: "Óculos de segurança", ca: "12345", valCa: "15/05/2028", proxTroca: "10/01/2026" }
+        ],
+        areas5S: [
+            { id: 1, nome: "Sala de Controle", responsavel: "Elcio Rodrigues", maturidade: "Nível 3 - Padronização", percentual: 85 },
+            { id: 2, nome: "Oficina Elétrica", responsavel: "Carlos M.", maturidade: "Nível 2 - Ordem", percentual: 67 }
+        ],
+        gestaoRisco: [
+            { disciplina: "AUTO", descricao: "Falha no CLP da Britagem", acao: "Substituir fonte", responsavel: "André", prazo: "20/04/2026" }
+        ],
+        treinamentos: [
+            { nome: "NR-10 Básico", colaborador: "Elcio Rodrigues", vencimento: "15/05/2026" },
+            { nome: "SAP PM", colaborador: "Gilmar Patrício", vencimento: "10/04/2026" }
+        ],
+        documentos: [
+            { nome: "Manual CLP Controllogix", versao: "2.0", link: "#" }
+        ],
+        historicoFalhas: [
+            { equipamento: "CLP-01", falha: "Perda de comunicação", data: "05/04/2026", status: "Corrigido" }
+        ],
+        projetosConcluidos: [
+            { nome: "Modernização IHM Britagem", data: "03/2026", responsavel: "Samuell" }
+        ],
+        equipe: [
+            { nome: "Elcio Rodrigues", funcao: "Técnico Instr.", disponibilidade: "Disponível" },
+            { nome: "Gilmar Patrício", funcao: "Técnico Instr.", disponibilidade: "Em treinamento" }
+        ],
+        agenda: [
+            { data: "10/04/2026", evento: "Reunião de Planejamento", local: "Sala A" }
+        ]
+    };
+
+    // Renderização das abas
+    const tabsConfig = ["Indicadores", "Segurança", "EPI", "5S", "Gestão de Risco", "Treinamentos", "Documentos", "Hist. de Falhas", "Projetos Concluídos", "Quadro de Equipe", "Agenda"];
+
+    function buildTabs() {
+        const tabsDiv = document.getElementById('tabs');
+        const contentsDiv = document.getElementById('tabContents');
+        tabsDiv.innerHTML = '';
+        contentsDiv.innerHTML = '';
+        tabsConfig.forEach((tab, idx) => {
+            let btn = document.createElement('button');
+            btn.className = 'tab-btn' + (idx === 0 ? ' active' : '');
+            btn.innerText = tab;
+            btn.onclick = () => activateTab(idx);
+            tabsDiv.appendChild(btn);
+            
+            let contentDiv = document.createElement('div');
+            contentDiv.className = 'tab-content' + (idx === 0 ? ' active' : '');
+            contentDiv.id = `tab-${idx}`;
+            contentsDiv.appendChild(contentDiv);
+            renderTabContent(tab, contentDiv);
+        });
+    }
+
+    function activateTab(activeIdx) {
+        document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+            if(i === activeIdx) btn.classList.add('active');
+            else btn.classList.remove('active');
+        });
+        document.querySelectorAll('.tab-content').forEach((cont, i) => {
+            if(i === activeIdx) cont.classList.add('active');
+            else cont.classList.remove('active');
+        });
+    }
+
+    function renderTabContent(tabName, container) {
+        if(tabName === "Indicadores") renderIndicadores(container);
+        else if(tabName === "Segurança") renderSeguranca(container);
+        else if(tabName === "EPI") renderEPI(container);
+        else if(tabName === "5S") render5S(container);
+        else if(tabName === "Gestão de Risco") renderRisco(container);
+        else if(tabName === "Treinamentos") renderTreinamentos(container);
+        else if(tabName === "Documentos") renderDocumentos(container);
+        else if(tabName === "Hist. de Falhas") renderFalhas(container);
+        else if(tabName === "Projetos Concluídos") renderProjetos(container);
+        else if(tabName === "Quadro de Equipe") renderEquipe(container);
+        else if(tabName === "Agenda") renderAgenda(container);
+    }
+
+    function renderIndicadores(container) {
+        let d = dashboardData.indicadores;
+        container.innerHTML = `
+            <div class="info-card"><h3>📈 Indicadores Operacionais</h3>
+                <table><tr><th>Indicador</th><th>Atual (%)</th><th>Meta (%)</th><th>Parada (%)</th></tr>
+                <tr><td>Disponibilidade Física</td><td>${d.disponibilidade.atual}</td><td>${d.disponibilidade.meta}</td><td>${d.disponibilidade.parada}</td></tr>
+                <tr><td>Beneficiamento</td><td>${d.beneficiamento.atual}</td><td>${d.beneficiamento.meta}</td><td>${d.beneficiamento.parada}</td></tr>
+                <tr><td>Concentração</td><td>${d.concentracao.atual}</td><td>${d.concentracao.meta}</td><td>${d.concentracao.parada}</td></tr>
+            </table></div>
+            <div class="info-card"><h3>📊 Aderência a Programação</h3><p>Mês: ${d.aderencia.mes}% | Ano: ${d.aderencia.ano}%</p></div>
+            <div class="info-card"><h3>✅ Cumprimento de Planos</h3><p>Geral: ${d.planos.geral}% | AUTO: ${d.planos.auto}% | INST: ${d.planos.inst}% | REDES: ${d.planos.redes}%</p></div>
+            <div class="info-card"><h3>👥 Apropriação Mão de Obra</h3><p>Global: ${d.maoObra.global}% | AUTO: ${d.maoObra.auto}% | INST: ${d.maoObra.inst}% | REDES: ${d.maoObra.redes}%</p></div>
+        `;
+    }
+
+    function renderSeguranca(container) {
+        let hoje = new Date();
+        let futuros = dashboardData.dss.filter(d => d.data >= hoje).slice(0,7);
+        let dssHtml = futuros.map(d => `<div style="background:#0d0d14; margin:6px; padding:8px; border-radius:8px;">${d.data.toLocaleDateString('pt-br', {weekday:'short'}).toUpperCase()} ${d.data.toLocaleDateString()}<br><strong>Tema:</strong> ${d.tema}<br><strong>Responsável:</strong> ${d.responsavel}</div>`).join('');
+        
+        let rankCalc = [...dashboardData.rank].map(r => ({ ...r, pontos: (r.recusas*20)+(r.relatos*10)+(r.indices*5) })).sort((a,b)=>b.pontos-a.pontos);
+        let rankHtml = `<table><tr><th>Pos</th><th>Nome</th><th>REL</th><th>IND</th><th>REC</th><th>Pts</th></tr>` + rankCalc.map((r,i)=>`<tr><td>${i+1}°</td><td>${r.nome}</td><td>${r.relatos}</td><td>${r.indices}</td><td>${r.recusas}</td><td>${r.pontos}</td></tr>`).join('') + `</table>`;
+        
+        container.innerHTML = `
+            <div class="info-card"><h3>📅 Planejamento DSS</h3><div style="display:flex; flex-wrap:wrap;">${dssHtml}</div></div>
+            <div class="info-card"><h3>🏆 Rank de Segurança</h3>${rankHtml}</div>
+        `;
+    }
+
+    function renderEPI(container) {
+        let epiHtml = `<table><tr><th>Responsável</th><th>Data Entrega</th><th>EPI</th><th>CA</th><th>Validade CA</th><th>Próx Troca</th></tr>` +
+            dashboardData.epi.map(e => `<tr><td>${e.responsavel}</td><td>${e.dataEntrega}</td><td>${e.descricao}</td><td>${e.ca}</td><td>${e.valCa}</td><td>${e.proxTroca}</td></tr>`).join('') + `</table>`;
+        container.innerHTML = `<div class="info-card"><h3>🛡️ Controle de EPIs</h3>${epiHtml}</div>`;
+    }
+
+    function render5S(container) {
+        let areasHtml = dashboardData.areas5S.map(a => `<div style="border:1px solid #2a2a35; margin:8px; padding:10px; border-radius:8px;"><strong>📍 ${a.nome}</strong><br>Responsável: ${a.responsavel}<br>Maturidade: ${a.maturidade}<br>% Questionário: ${a.percentual}%</div>`).join('');
+        container.innerHTML = `<div class="info-card"><h3>🏭 Programa 5S - Maturidade</h3>${areasHtml}</div>`;
+    }
+
+    function renderRisco(container) {
+        let riscoHtml = dashboardData.gestaoRisco.map(r => `<div class="dss-item"><strong>${r.disciplina}</strong><br>${r.descricao}<br>Ação: ${r.acao}<br>Responsável: ${r.responsavel}<br>Prazo: ${r.prazo}</div>`).join('');
+        container.innerHTML = `<div class="info-card"><h3>⚠️ Gestão de Riscos</h3>${riscoHtml}</div>`;
+    }
+
+    function renderTreinamentos(container) {
+        let treinHtml = dashboardData.treinamentos.map(t => `<div class="dss-item"><strong>${t.nome}</strong><br>👤 ${t.colaborador}<br>📅 Vencimento: ${t.vencimento}</div>`).join('');
+        container.innerHTML = `<div class="info-card"><h3>📚 Treinamentos</h3>${treinHtml}</div>`;
+    }
+
+    function renderDocumentos(container) {
+        let docHtml = dashboardData.documentos.map(d => `<div class="dss-item"><strong>${d.nome}</strong><br>Versão: ${d.versao}<br><a href="${d.link}" style="color:#ff6a00;">Acessar</a></div>`).join('');
+        container.innerHTML = `<div class="info-card"><h3>📁 Documentos Técnicos</h3>${docHtml}</div>`;
+    }
+
+    function renderFalhas(container) {
+        let falhasHtml = dashboardData.historicoFalhas.map(f => `<div class="dss-item"><strong>${f.equipamento}</strong><br>Falha: ${f.falha}<br>Data: ${f.data}<br>Status: ${f.status}</div>`).join('');
+        container.innerHTML = `<div class="info-card"><h3>⚠️ Histórico de Falhas</h3>${falhasHtml}</div>`;
+    }
+
+    function renderProjetos(container) {
+        let projHtml = dashboardData.projetosConcluidos.map(p => `<div class="dss-item"><strong>${p.nome}</strong><br>Data: ${p.data}<br>Responsável: ${p.responsavel}</div>`).join('');
+        container.innerHTML = `<div class="info-card"><h3>✅ Projetos Concluídos</h3>${projHtml}</div>`;
+    }
+
+    function renderEquipe(container) {
+        let equipeHtml = dashboardData.equipe.map(e => `<div class="dss-item"><strong>${e.nome}</strong><br>Função: ${e.funcao}<br>Status: ${e.disponibilidade}</div>`).join('');
+        container.innerHTML = `<div class="info-card"><h3>👥 Quadro de Equipe</h3>${equipeHtml}</div>`;
+    }
+
+    function renderAgenda(container) {
+        let agendaHtml = dashboardData.agenda.map(a => `<div class="dss-item"><strong>📅 ${a.data}</strong><br>${a.evento}<br>📍 ${a.local}</div>`).join('');
+        container.innerHTML = `<div class="info-card"><h3>📅 Agenda</h3>${agendaHtml}</div>`;
+    }
+
+    // Relógio e alertas
+    function updateClock(){
+        let now = new Date();
+        let timeStr = now.toLocaleTimeString('pt-br');
+        let weekdays = ["DOM", "SEG", "TER", "QUA", "QUI", "SEX", "SAB"];
+        let day = weekdays[now.getDay()];
+        let dayNum = now.getDate().toString().padStart(2,'0');
+        let month = now.toLocaleString('pt-br', { month: 'short' }).toUpperCase().slice(0,3);
+        let dateStr = `${day} ${dayNum} ${month}`;
+        document.getElementById('liveClock').innerText = timeStr;
+        document.getElementById('liveDate').innerText = dateStr;
+    }
+
+    function renderAlertas(){
+        let { criticos, alertas } = gerarAlertas();
+        let container = document.getElementById('alertsContainer');
+        container.innerHTML = `
+            <div class="alert-box critical"><h4>🔴 CRÍTICOS (≤7 dias)</h4><div class="alert-list">${criticos.length ? criticos.map(c=>`<div class="alert-item crit">⚠️ ${c}</div>`).join('') : '<div>Nenhum crítico</div>'}</div></div>
+            <div class="alert-box warning"><h4>🟡 ALERTAS (8-30 dias)</h4><div class="alert-list">${alertas.length ? alertas.map(a=>`<div>⚠️ ${a}</div>`).join('') : '<div>Nenhum alerta</div>'}</div></div>
+        `;
+    }
+
+    setInterval(()=>{ updateClock(); renderAlertas(); }, 1000);
+    updateClock();
+    renderAlertas();
+    buildTabs();
+</script>
+</body>
+</html>
